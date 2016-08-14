@@ -1,5 +1,4 @@
-
-Data, glorious data. 
+##Data, glorious data. 
 
 Data = Singal + Noise
 
@@ -19,4 +18,4 @@ In sample error (resubstitution error): Errors on the training set that we built
 Out of sample error (generalization error): Errors on the data set that wasn't used to train the predictor. The data we don't have but want to predict. 
 Importance: Out > In
 
-Overfitting: Sometimes, simple rules do better than complicated rules
+Overfitting: Happens when a prediction model is excessively complex. Sometimes, simple rules do better than complicated rules.
