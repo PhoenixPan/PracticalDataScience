@@ -1,10 +1,11 @@
 ##Data, glorious data. 
+Basic:
 
-Data = Singal + Noise
-Goal of the predictor: find the signal, ignore the noise. 
-Garbage in = Garbage out
+1. Data = Singal + Noise
+2. Goal of our model: find the signal, ignore the noise. 
+3. Garbage in = Garbage out
 
-Issues to consider and trade-offs
+Issues to consider and trade-offs:
 
 1. Interpretable;
 2. Simple;
@@ -20,11 +21,21 @@ Importance: Out > In
 
 Overfitting: Happens when a prediction model is excessively complex. Sometimes, simple rules do better than complicated rules.
 
-Split data into: 
+Divide your dataset into:
 
-1. Training set: Building model for prediction);
+1. Training set: Building model for prediction. This is the only part that should be visable to you when you build the model;
 2. Testing set: Test the model, be aware of overfitting. Use testing set for trainging only if you have validation set;
 3. Validation set (optional): To validate your model at the end, not used for training  
 
-Apply to the validation set (testing set if it's abscent) for only one time. Otherwise, we are using the test set to train the model. 
+Keep in mind: 
 
+1. Apply to the validation set (testing set if it's abscent) for only one time. Otherwise, we are using the test set to train the model. 
+2. Avoid small sample sizes, otherwise you may get your accuracy by coincidence (flip a coin).
+3. Sample your data in time chunks (backtesting)
+4. Random assignment or balancing by features (tricky)
+
+Rules of thumb:
+
+1. Large dataset: 60% for training, 20% for testing, 20% for validation 
+2. Medium dataset: 60% for training, 40% for testing (no refinery)
+3. Small dataset: are you sure you want to do this? 
