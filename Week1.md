@@ -51,12 +51,12 @@ Positive Predictive Value = TP / (TP + FP) --- accuracy of all the positives
 Negative Predictive Value = TN / (FN + TN) --- accuracy of all the negatives   
 Accuracy outcome = TP + FN/ ALL SUM  
 
-Exercise: Assume that some disease has a 0.1% prevalence in the population. If a test kit gives 99% sensitivity and 99% speciality, what is the possibility of a person, given the test is positive, really has the disease?
-  
+Exercise: Assume that some disease has a 0.1% prevalence in the population. If a test kit gives 99% sensitivity and 99% speciality, what is the possibility of a person, given the test is positive, really has the disease?  
+```  
               Disease
            +          -
 Test +    99         999
      -     1       98901
-     
+```
 Positive Predictive Value = 99/(99+999) ≈ 9%
 
