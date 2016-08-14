@@ -61,3 +61,16 @@ Test +    99         999
 Positive Predictive Value = 99/(99+999) ≈ 9%  
 We need more accurate prediction when the event has lower change to happen to ensure the same accuracy.
 
+Error measures for continuous data:  
+1. Mean squard error (MSE): 1/n * ∑(Prediction - Truth)^2 (similar to standard deviation, low tolerance for outliers)  
+2. Root mean squard error (RMSE): √MSE  (bring back the scale which has been extended by square in MSE, more robust)  
+3. Sensitivity: few missed positives
+4. Speciality: few negatives called positives
+5. Accuracy:  weights false positive/negative equally
+6. Concodance: example: kappa
+
+
+
+
+
+
