@@ -1,9 +1,7 @@
 ##Data, glorious data. 
 
 Data = Singal + Noise
-
 Goal of the predictor: find the signal, ignore the noise. 
-
 Garbage in = Garbage out
 
 Issues to consider and trade-offs
@@ -17,5 +15,7 @@ Issues to consider and trade-offs
 In sample error (resubstitution error): Errors on the training set that we built with. The data we have.
 Out of sample error (generalization error): Errors on the data set that wasn't used to train the predictor. The data we don't have but want to predict. 
 Importance: Out > In
-
 Overfitting: Happens when a prediction model is excessively complex. Sometimes, simple rules do better than complicated rules.
+
+Split data into Training, Testing, and Validation(optional) sets. 
+Apply to test set for only one time. Otherwise, we are using the test set to train the model. 
