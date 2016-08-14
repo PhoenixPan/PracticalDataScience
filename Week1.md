@@ -25,4 +25,6 @@ Split data into:
 1. Training set: Building model for prediction);
 2. Testing set: Test the model, be aware of overfitting. Use testing set for trainging only if you have validation set;
 3. Validation set (optional): To validate your model at the end, not used for training  
-Apply to test set for only one time. Otherwise, we are using the test set to train the model. 
+
+Apply to the validation set (testing set if it's abscent) for only one time. Otherwise, we are using the test set to train the model. 
+
