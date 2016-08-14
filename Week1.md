@@ -43,3 +43,10 @@ True Positive
 False positive  
 True Negative  
 False Negative
+
+Key fractions:  
+Sensitivity = TP / (TP + FN) --- accuracy of all the trues  
+Specificity = TN / (TN + FP) --- false of all the falses  
+Positive Predictive Value = TP / (TP + FP) --- accuracy of all the positives    
+Negative Predictive Value = TN / (FN + TN) --- accuracy of all the negatives   
+Accuracy outcome = TP + FN/ ALL SUM  
