@@ -58,5 +58,6 @@ Exercise: Assume that some disease has a 0.1% prevalence in the population. If a
 Test +    99         999
      -     1       98901
 ```
-Positive Predictive Value = 99/(99+999) ≈ 9%
+Positive Predictive Value = 99/(99+999) ≈ 9%  
+We need more accurate prediction when the event has lower change to happen to ensure the same accuracy.
 
