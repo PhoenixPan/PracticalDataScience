@@ -69,7 +69,7 @@ Error measures for continuous data:
 5. Accuracy:  weights false positive/negative equally
 6. Concodance: example: kappa
 
-Receiver Operating Charactistic(ROC) curves  
+##Receiver Operating Charactistic(ROC) curves  
 X axis: P(FP) = 1 - speciality    
 Y axis: P(TP) = sensitivity  
 
@@ -78,6 +78,7 @@ AUC = 0.5: random guessing
 AUC = 1:   perfect classifer  
 In general, the AUC above 0.8 considered "good".  
 
+##Cross Validation  
 
 
 
