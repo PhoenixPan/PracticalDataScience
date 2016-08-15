@@ -86,16 +86,32 @@ In general, the AUC above 0.8 considered "good".
 
 Approach:  
 1. Use the training set;  
-2. Split it into training/test sets;  
+2. Split it into training/test sets;    
 3. Build a model on the training set;  
 4. Evaluate on the test set;  
 5. Repeat and average the estimated errors.  
-
+(Since we split the original dataset, it can still provides an objective result when we test it at the end)  
+  
 Used for:  
 1. Picking variables to introduce in a model;  
 2. Picking the type of prediction function to use;  
 3. Picking the parameters in the prediction function;  
 4. Corporating different predictors.  
+  
+Model building:  
+Random subsampling: randomly choose training/test sets sectors;  
+K-Fold: example of 3-fold, we create three combination on one dataset: train/train/test, train/test/train, test/train/train;    
+Leave one out: Leave a certain width as test set, put it in many places. 10000,01000,...;  
+  
+Consideration:  
+1. For time series data, data must be used in "chunks";  
+2. For K-fold cross validation, larger k means less bias, more variance, smaller k means more bias, less variance;  
+3. Random sampling must be done without replacement, otherwise you get bootstrap and underestimate the error;  
+4. Estimate errors in independent dataset.  
+  
+
+##Most common mistake: Unrelated data  
+Example: Chocolate consumption and Nobel Prize are not really related, as Europeans countries may happen to like chocolate more and they are also in charge of issuing the prize. 
 
 
 
