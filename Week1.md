@@ -79,6 +79,26 @@ AUC = 1:   perfect classifer
 In general, the AUC above 0.8 considered "good".  
 
 ##Cross Validation  
+1. Accuracy on training set (resubstitution accuracy) is optimistic;  
+2. A better estimate comes from an __independent__ set (test set accuracy);  
+3. Don't use test set when building model or use it as a part of training set;  
+4. So we estimate the test set accuracy with the training set.  
+
+Approach:  
+1. Use the training set;  
+2. Split it into training/test sets;  
+3. Build a model on the training set;  
+4. Evaluate on the test set;  
+5. Repeat and average the estimated errors.  
+
+Used for:  
+1. Picking variables to introduce in a model;  
+2. Picking the type of prediction function to use;  
+3. Picking the parameters in the prediction function;  
+4. Corporating different predictors.  
+
+
+
 
 
 
