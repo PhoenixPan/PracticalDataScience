@@ -69,6 +69,9 @@ Error measures for continuous data:
 5. Accuracy:  weights false positive/negative equally
 6. Concodance: example: kappa
 
+Receiver Operating Charactistic curves  
+X axis: P(FP)  
+Y axis: P(TP)  
 
 
 
