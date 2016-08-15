@@ -34,7 +34,7 @@ Rules of thumb:
 
 Out of sample error > In sample error:  
 1. In sample error (resubstitution error): Errors on the training set that we built with. The data we have;  
-2. Out of sample error (generalization error): Errors on the data set that wasn't used to train the predictor. The data we don't have but want to predict. 
+2. Out of sample error (generalization error): Errors on the data set that wasn't used to train the predictor. The data we don't have but want to predict.  
 
 Positive = identified  
 Negative = rejected
@@ -64,10 +64,10 @@ We need more accurate prediction when the event has lower change to happen to en
 Error measures for continuous data:  
 1. Mean squard error (MSE): 1/n * ∑(Prediction - Truth)^2 (similar to standard deviation, low tolerance for outliers)  
 2. Root mean squard error (RMSE): √MSE  (bring back the scale which has been extended by square in MSE, more robust)  
-3. Sensitivity: few missed positives
-4. Speciality: few negatives called positives
-5. Accuracy:  weights false positive/negative equally
-6. Concodance: example: kappa
+3. Sensitivity: few missed positives  
+4. Speciality: few negatives called positives  
+5. Accuracy:  weights false positive/negative equally  
+6. Concodance: example: kappa  
 
 ##Receiver Operating Charactistic(ROC) curves  
 X axis: P(FP) = 1 - speciality    
