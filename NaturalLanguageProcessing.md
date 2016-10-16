@@ -6,7 +6,6 @@
 ![figure1](https://cloud.githubusercontent.com/assets/14355257/19225451/1e1a87e0-8e6b-11e6-9fd3-b4b2d5b59e99.png)
 
 
-# Natural Language Processing
 ## Introduction
 
 In this problem you will develop two techniques for analyzing free text documents: a bag of words approach based upon creating a TFIDF matrix, and an n-gram language model.
