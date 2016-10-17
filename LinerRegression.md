@@ -262,6 +262,11 @@ class LR_model():
         theta1 = np.linalg.solve(X.T.dot(X) + 1e-4*np.eye(X.shape[1]), X.T.dot(y)) 
         self.beta = theta1
         
+        self.beta = np.zeros(X.shape[1])
+        temp = np.add(X.T.dot(X), np.identity(X.shape[1]) * le-4)
+        c_and_lower = la.cho_factor(temp, lower=True)
+        self.beta = la.cho_solve(c_and_lower, X.T.dot(y)
+        
     def predict(self, X_p): 
         """ Predict the output of X_p using this linear model. 
             Args: 
