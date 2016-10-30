@@ -164,4 +164,187 @@ print f.partial_log_likelihood(pd.Series([43,40,100,10]))
 # AUTOLAB_IGNORE_STOP
 ```
 
+## Q2. Categorical Feature Predictor [8pts]
+The categorical distribution with $l$ categories $\{0,\ldots,l-1\}$ is characterized by parameters $\mathbf{p} = (p_0,\dots,p_{l-1})$:
+$$ P(z; \mathbf{p}) = p_0^{[z=0]}p_1^{[z=1]}\ldots p_{l-1}^{[z=l-1]} $$
+
+where $[z=t]$ is 1 if $z$ is $t$ and 0 otherwise.
+
+Given $n$ samples $z_1, \ldots, z_n$ from the above distribution, the smoothed-MLE for each $p_t$ is:
+$$ \hat{p_t} = \frac{n_t + \alpha}{n + l\alpha} $$
+
+where $n_t = \sum_{j=1}^{n} [z_j=t]$, i.e., the number of times the label $t$ occurred in the sample. The smoothing is done to avoid zero-count problem (similar in spirit to $n$-gram model in NLP).
+
+```
+class CategoricalPredictor:
+    """ Feature predictor for a categorical feature.
+        Attributes: 
+            p (dict) : dictionary of vector containing per class probability of a feature value;
+                    the keys of dictionary should exactly match the values taken by this feature
+    """
+    # feel free to define and use any more attributes, e.g., number of classes, etc
+    def __init__(self, x, y, alpha=1) :
+        """ initializes the predictor statistics (mu, sigma) for Gaussian distribution
+        Inputs:
+            x (array_like): feature values (continuous)
+            y (array_like): class labels (0,...,k-1)
+        """
+        categories = x.unique()
+        labels = y.unique()
+        self.k = len(labels)
+        self.p = {}
+        occurance = {}
+        for each in categories:
+            self.p[each] = np.zeros(self.k)
+            occurance[each] = [0] * self.k
+            
+        label_counts = [0] * self.k
+        for sex, label in zip(x, y):
+            occurance[sex][label] += 1
+            label_counts[label] += 1
+        
+#         print (occurance['Male'][1] + alpha)/ float(label_counts[1] + len(self.p) * alpha)
+        for each in categories:
+            for j in xrange(self.k):
+                self.p[each][j] = (occurance[each][j] + alpha) / float(label_counts[j] + len(self.p) * alpha)
+                
+    def partial_log_likelihood(self, x):
+        """ log likelihood of feature values x according to each class
+        Inputs:
+            x (array_like): vector of feature values
+        Outputs:
+            (array_like): matrix of log likelihood for this feature
+        """
+#         from collections import Counter
+#         cnt = Counter(x)
+#         most_common = cnt.most_common()[0][0]
+        new_x = [0] * len(x)
+        for i in xrange(len(x)):
+            if self.p.has_key(x[i]):
+                new_x[i] = 1
+            else:
+                new_x[i] = 0
+        
+        result = np.zeros((len(x),self.k))
+        for i in xrange(len(new_x)):
+            for j in xrange(self.k):
+                result[i,j] = stats.bernoulli.logpmf(new_x[i],self.p[x[i]][j])
+        return result
+    
+# AUTOLAB_IGNORE_START
+f = CategoricalPredictor(df['sex'], df['label'])
+print f.p
+print f.partial_log_likelihood(pd.Series(['Male','Female','Male']))
+# print f.partial_log_likelihood(df['work_class'])
+# AUTOLAB_IGNORE_STOP
+```
+
+## Q3 Putting things together [10pts]
+It's time to put all the feature predictors together and do something useful! You will implement two functions in the following class.
+
+1. **__init__()**: Compute the log prior for each class and initialize the feature predictors (based on feature type). The smoothed prior for class $t$ is given by
+$$ prior(t) = \frac{n_t + \alpha}{n + k\alpha} $$
+where $n_t = \sum_{j=1}^{n} [y_j=t]$, i.e., the number of times the label $t$ occurred in the sample. 
+
+2. **predict()**: For each instance and for each class, compute the sum of log prior and partial log likelihoods for all features. Use it to predict the final class label. Break ties by predicting the class with lower id.
+
+```
+class NaiveBayesClassifier:
+    """ Naive Bayes classifier for a mixture of continuous and categorical attributes.
+        We use GaussianPredictor for continuous attributes and MultinomialPredictor for categorical ones.
+        Attributes:
+            predictor (dict): model for P(X_i|Y) for each i
+            log_prior (array_like): log P(Y)
+    """
+    # feel free to define and use any more attributes, e.g., number of classes, etc
+    def __init__(self, df, alpha=1):
+        """initializes predictors for each feature and computes class prior
+        Inputs:
+            df (pd.DataFrame): processed dataframe, without any missing values.
+        """
+        y = df['label']
+        n = len(y)
+        self.k = len(y.unique())
+        
+        # Calculate log_prior
+        self.log_prior = np.zeros(self.k)
+        occurance = [0] * len(y)
+        for each in df['label']:
+            occurance[each] += 1
+        for i in xrange(self.k):
+            self.log_prior[i] = np.log((occurance[i] + alpha) / float(n + self.k * alpha))
+        
+        # Get predictors
+        columns = df.columns.tolist()
+        self.predictor = {}
+        for each in columns:
+            if each != 'label':
+                if df[each].dtype == 'int64':
+                    self.predictor[each] = GaussianPredictor(df[each], df['label'])
+                else:
+                    self.predictor[each] = CategoricalPredictor(df[each], df['label'], alpha)
+        
+    def predict(self, x):
+        """ predicts label for input instances from log_prior and partial_log_likelihood of feature predictors
+        Inputs:
+            x (pd.DataFrame): processed dataframe, without any missing values and without class label.
+        Outputs:
+            (array_like): array of predicted class labels (0,..,k-1)
+        """
+#         labels = x['label']
+        if 'label' in x.columns:
+            x = x.drop('label',1)
+        if 'index' in x.columns:
+            x = x.drop('index',1)
+        column_names = x.columns
+        length = len(x)
+        data = np.zeros((length, self.k))
+        for each in column_names:
+            column_elements = x[each]
+            data += self.predictor[each].partial_log_likelihood(column_elements)
+        data = data + self.log_prior
+#         print data
+        output_list = pd.Series(np.random.randn(length))
+        count = 0
+        for each in data:
+            index = np.argmax(each)
+            output_list[count] = index
+            count += 1
+        result = output_list
+        return result.as_matrix()
+    
+# AUTOLAB_IGNORE_START
+c = NaiveBayesClassifier(df, 0)
+y_pred = c.predict(df)
+
+print y_pred.shape
+print y_pred
+# AUTOLAB_IGNORE_STOP
+```
+
+## Q5. Evaluation - Error rate [2pts]
+If a classifier makes $n_e$ errors on a data of size $n$, its error rate is $n_e/n$. Fill the following function, to evaluate your classifier.
+
+```
+def evaluate(y_hat, y):
+    """ Evaluates classifier predictions
+        Inputs:
+            y_hat (array_like): output from classifier
+            y (array_like): true class label
+        Output:
+            (double): error rate as defined above
+    """
+    error = 0
+    for i, j in zip(y, y_hat):
+        if i != j:
+            error += 1
+    return error/float(len(y))
+
+# AUTOLAB_IGNORE_START
+evaluate(y_pred, df['label'])
+# AUTOLAB_IGNORE_STOP
+```
+0.24892248524633645
+
+Our implementation yields 0.17240236058616804.
 https://docs.scipy.org/doc/scipy-0.15.1/reference/generated/scipy.stats.norm.html
