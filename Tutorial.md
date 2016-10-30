@@ -26,3 +26,97 @@ A standard MapReduce would follow these six steps:
 6. **Reduce-Reduce**: A partiion, a group of data, will be processed by our reduce() function in this task. Ususally, it should summarize the output, leading to a significant reduce in the data size, as this task removes redundancy;
 
 (Step 3, 4 and 5 are often recogized as one "Shuffle" stage in many cases, as they are closed related and are not controlled by user functions)  
+
+
+## Understanding MapReduce: Wordcount
+
+Wordcount is the simplest implementation of MapReduce task. Let's get our hands dirty now. Given the sentence below:
+
+__"I have a pan, I have an applie, ah, apple-pan."__
+
+We firstly clean up data using the function below. Though we could choose to clean data using similar code inside our map() function, that will be processed for each word and significantly slows the tasks in some cases. 
+```
+text = "I have a pan, I have an applie, ah, apple-pan."
+
+import nltk
+import string
+
+def clean(text, lemmatizer=nltk.stem.wordnet.WordNetLemmatizer()):
+    result = []
+    processed = text.lower()
+    processed = processed.replace("'s", "")
+    processed = processed.replace("'", "")
+    remove_punct = string.maketrans(string.punctuation," "*len(string.punctuation))
+    processed = processed.translate(remove_punct)
+    for element in nltk.word_tokenize(processed):
+        try:
+            result.append(str(lemmatizer.lemmatize(element)))
+        except:
+            continue
+    return ' '.join(result)
+```
+We shall have：
+```
+print clean(text)
+```
+#### Execution Steps:
+
+##### Split
+The Map phase will firstly split the data into HDFS chunk and distribute them to several different machines, let's say three machines:  
+
+Assume each chunk can have maximum four words (corresponding to 100MB):  
+HDFS 1: i have a pan  
+HDFS 2: i have an apple  
+HDFS 3: ah apple pan  
+
+Machine 1: HDFS1(i have a pan)  
+Machine 2: HDFS2(i have an apple)  
+Machine 3: HDFS3(ah apple pan)  
+
+##### Map  
+Now we execute a map() function for each chunk. After the Map function, we shall have many uncategorized partitions in each machine:  
+
+Machine 1: {"i":1}  
+Machine 1: {"have":1}  
+Machine 1: {"a":1}  
+Machine 1: {"pan":1}  
+  
+Machine 2: {"i":1}  
+Machine 2: {"have":1}  
+Machine 2: {"an":1}  
+Machine 2: {"apple":1}   
+  
+Machine 3: {"ah":1}   
+Machine 3: {"apple":1}    
+Machine 3: {"pan":1}
+
+##### Shuffle    
+We categorize and sort similar partitions and make them new partitions, which we used to feed our Reducer.     
+  
+New Partition 1: {"i":1}  
+New Partition 1: {"i":1}  
+New Partition 1: {"have":1}  
+New Partition 1: {"have":1}  
+  
+New Partition 2: {"a":1}  
+New Partition 2: {"an":1}  
+New Partition 2: {"ah":1}  
+  
+New Partition 3: {"pan":1}    
+New Partition 3: {"pan":1}  
+New Partition 3: {"apple":1}     
+New Partition 3: {"apple":1}     
+
+##### Reduce   
+Finally we invode reduce() function on each newly-formed partition and get the word counts for each word.  
+Reducer 1: {"i":2}   
+Reducer 1: {"have":2}  
+  
+Reducer 2: {"a":1}  
+Reducer 2: {"an":1}  
+Reducer 2: {"ah":1}  
+  
+Reducer 3: {"pan":2}   
+Reducer 3: {"apple":2}  
+
+The final results of word counts will be put to target HDFS directory at the user's disposal.
