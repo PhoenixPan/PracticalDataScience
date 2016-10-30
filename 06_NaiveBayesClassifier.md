@@ -33,7 +33,71 @@ import numpy as np
 import scipy
 from scipy import stats
 ```
+```
+def load_data(file_name):
+    """ loads and processes data in the manner specified above
+    Inputs:
+        file_name (str): path to csv file containing data
+    Outputs:
+        pd.DataFrame: processed dataframe
+    """
+    df = pd.read_csv(file_name, na_values='?')
+    df = df.dropna()
+    df = df.rename(columns=lambda x: x.replace('income', 'label'))
+    for index, row in df.iterrows():
+        if row['label'] == '>50K':
+            df.set_value(index, 'label', '1')
+        else:
+            df.set_value(index, 'label', '0')
+    df['label'] = df['label'].apply(pd.to_numeric) 
+    df = df.reset_index()
+    return df
+
+# AUTOLAB_IGNORE_START
+df = load_data('census.csv')
+print df.isnull().values.any()  # True
+print df.tail()
+print len(df)
+# AUTOLAB_IGNORE_STOP
+```
+
+## Overview of Naive Bayes classifier
+Let $X_1, X_2, \ldots, X_k$ be the $k$ features of a dataset, with class label given by the variable $y$. A probabilistic classifier assigns the most probable class to each instance $(x_1,\ldots,x_k)$, as expressed by
+$$ \hat{y} = \arg\max_y P(y\ |\ x_1,\ldots,x_k) $$
+
+Using Bayes' theorem, the above *posterior probability* can be rewritten as
+$$ P(y\ |\ x_1,\ldots,x_k) = \frac{P(y) P(x_1,\ldots,x_n\ |\ y)}{P(x_1,\ldots,x_k)} $$
+where
+- $P(y)$ is the prior probability of the class
+- $P(x_1,\ldots,x_k\ |\ y)$ is the likelihood of data under a class
+- $P(x_1,\ldots,x_k)$ is the evidence for data
+
+Naive Bayes classifiers assume that the feature values are conditionally independent given the class label, that is,
+$ P(x_1,\ldots,x_n\ |\ y) = \prod_{i=1}^{k}P(x_i\ |\ y) $. This strong assumption helps simplify the expression for posterior probability to
+$$ P(y\ |\ x_1,\ldots,x_k) = \frac{P(y) \prod_{i=1}^{k}P(x_i\ |\ y)}{P(x_1,\ldots,x_k)} $$
+
+For a given input $(x_1,\ldots,x_k)$, $P(x_1,\ldots,x_k)$ is constant. Hence, we can simplify omit the denominator replace the equality sign with proportionality as follows:
+$$ P(y\ |\ x_1,\ldots,x_k) \propto P(y) \prod_{i=1}^{k}P(x_i\ |\ y) $$
+
+Thus, the class of a new instance can be predicted as $\hat{y} = \arg\max_y P(y) \prod_{i=1}^{k}P(x_i\ |\ y)$. Here, $P(y)$ is commonly known as the **class prior** and $P(x_i\ |\ y)$ termed **feature predictor**. The rest of the assignment deals with how each of these $k+1$ probability distributions -- $P(y), P(x_1\ |\ y), \ldots, P(x_k\ |\ y)$ -- are estimated from data.
 
 
+**Note**: Observe that the computation of the final expression above involve multiplication of $k+1$ probability values (which can be really low). This can lead to an underflow of numerical precision. So, it is a good practice to use a log transform of the probabilities to avoid this underflow.
+
+** TL;DR ** Your final take away from this cell is the following expression:
+$$\hat{y} = \arg\max_y \underbrace{\log P(y)}_{log-prior} + \underbrace{\sum_{i=1}^{k} \log P(x_i\ |\ y)}_{log-likelihood}$$
+
+## Feature Predictor
+The beauty of a Naive Bayes classifier lies in the fact we can mix-and-match different likelihood models for each feature predictor according to the prior knowledge we have about it and these models can be varied independent of each other. For example, we might know that $P(X_i|y)$ for some continuous feature $X_i$ is normally distributed or that $P(X_i|y)$ for some categorical feature follows multinomial distribution. In such cases, we can directly plugin the pdf/pmf of these distributions in place of $P(x_i\ |\ y)$.
+
+In this assignment, you will be using two classes of likelihood models:
+- Gaussian model, for continuous real-valued features (parameterized by mean $\mu$ and variance $\sigma$)
+- Categorical model, for discrete features (parameterized by $\mathbf{p} = <p_0,\ldots,p_{l-1}>$, where $l$ is the number of values taken by this categorical feature)
+
+You need to implement a predictor class for each likelihood model. Each predictor should implement two functionalities:
+- **Parameter estimation `init()`**: Learn parameters of the likelihood model using MLE (Maximum Likelihood Estimator). You need to keep track of $k$ sets of parameters, one for each class.
+- **Partial Log-Likelihood computation for *this* feature `partial_log_likelihood()`**: Use the learnt parameters to compute the probability (density/mass for continuous/categorical features) of a given feature value.
+
+The parameter estimation is for the conditional distributions $P(X|Y)$. Thus, while estimating parameters for a specific class (say class 0), you will use only those data points in the training set (or rows in the input data frame) which have class label 0.
 
 https://docs.scipy.org/doc/scipy-0.15.1/reference/generated/scipy.stats.norm.html
