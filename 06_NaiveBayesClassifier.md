@@ -100,4 +100,68 @@ You need to implement a predictor class for each likelihood model. Each predicto
 
 The parameter estimation is for the conditional distributions $P(X|Y)$. Thus, while estimating parameters for a specific class (say class 0), you will use only those data points in the training set (or rows in the input data frame) which have class label 0.
 
+
+## Q2. Gaussian Feature Predictor [8pts]
+The Guassian distribution is characterized by two parameters - mean $\mu$ and standard deviation $\sigma$:
+$$ f_Z(z) = \frac{1}{\sqrt{2\pi}\sigma} \exp{(-\frac{(z-\mu)^2}{2\sigma^2})} $$
+
+Given $n$ samples $z_1, \ldots, z_n$ from the above distribution, the MLE for mean and standard deviation are:
+$$ \hat{\mu} = \frac{1}{n} \sum_{j=1}^{n} z_j $$
+
+$$ \hat{\sigma} = \frac{1}{n} \sum_{j=1}^{n} (z_j-\hat{\mu})^2 $$
+
+`scipy.stats.norm` would be helpful.
+
+```
+class GaussianPredictor:
+    """ Feature predictor for a normally distributed real-valued, continuous feature.
+        Attributes: 
+            mu (array_like) : vector containing per class mean of the feature
+            sigma (array_like): vector containing per class std. deviation of the feature
+    """
+    # feel free to define and use any more attributes, e.g., number of classes, etc
+    def __init__(self, x, y) :
+        """ initializes the predictor statistics (mu, sigma) for Gaussian distribution
+        Inputs:
+            x (array_like): feature values (continuous)
+            y (array_like): class labels (0,...,k-1)
+        """
+        self.k = len(y.unique())
+        self.mu = np.zeros(self.k)
+        self.sigma = np.zeros(self.k)
+        
+        class_data = []
+        for i in xrange(self.k):
+            class_data.append(list())
+        
+        labels = y.unique().tolist()
+        for age, label in zip(x, y):
+            class_data[label].append(age)
+        
+        for i in xrange(self.k):
+            self.mu[i] = np.average(class_data[i])
+            self.sigma[i] = np.std(class_data[i])
+        
+    def partial_log_likelihood(self, x):
+        """ log likelihood of feature values x according to each class
+        Inputs:
+            x (array_like): vector of feature values
+        Outputs:
+            (array_like): matrix of log likelihood for this feature alone
+        """
+        result = np.zeros((len(x),self.k))
+        for i in xrange(len(x)):
+            for j in xrange(self.k):
+                result[i,j] = stats.norm.logpdf(x[i],loc=self.mu[j],scale=self.sigma[j])
+        return result
+
+# AUTOLAB_IGNORE_START
+f = GaussianPredictor(df['age'], df['label'])
+print f.mu
+print f.sigma
+print f.partial_log_likelihood(pd.Series([43,40,100,10]))
+# print f.partial_log_likelihood(df['age'])
+# AUTOLAB_IGNORE_STOP
+```
+
 https://docs.scipy.org/doc/scipy-0.15.1/reference/generated/scipy.stats.norm.html
