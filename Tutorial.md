@@ -120,3 +120,6 @@ Reducer 3: {"pan":2}
 Reducer 3: {"apple":2}  
 
 The final results of word counts will be put to target HDFS directory at the user's disposal.
+
+Setting up Hadoop for single node ubuntu machine  
+http://thepowerofdata.io/setting-up-a-apache-hadoop-2-7-single-node-on-ubuntu-14-04/  
