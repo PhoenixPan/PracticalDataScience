@@ -4,7 +4,7 @@
 
 The penetration of the Internet and the increased usage of mobile devices have dramatically increased the data available in this world. The questions is, how are we going to process such a magnificent amount of data? Yes, we do have super computers in some places, but not everyone has access to them, especially normal developers. Is there a way for an individual to perform big data analysis efficiently?
 
-Thanks to all the open-source communities, we do. One of the most popular model is MapReduce. We will talk about it in this tutorial. You'll learn how to process a dataset of dozens of gigabytes with the help of cloud services. It means you can do it on a normal machine, anywhere, anytime. 
+Thanks to all the open-source communities, we do. One of the most popular model is MapReduce. We will talk about it in this tutorial. You'll learn how to process a dataset of dozens of gigabytes with the help of cloud services. It means you can do it on a normal machine, anywhere, anytime.   
 
 #### Tutorial Content
 
@@ -27,6 +27,9 @@ The MapReduce programming model is designed to process big dataset using a large
 [Hadoop MapReduce](http://www.apache.org/dyn/closer.cgi/hadoop/common/hadoop-2.7.0/hadoop-2.7.0.tar.gz) is an open-source implementation of Google's MapReduce. Though Hadoop MapReduce is written in Java, its implementation can be realzied through other languages, such as Python and C. Hadoop MapReduce uses the Hadoop Distributed File System (HDFS) as the underlying file system. 
 
 #### How it works
+(skip this part if you want, it's easier to read the following examples)
+
+Hadoop MapReduce has mainly two phases: Map and Reduce. The "map phrase" includes split, map, and partition tasks and the "reduce phase" includes shuffle, merge & sort, and reduce tasks. There should be at least one map task and zero or more reduce tasks in a MapReduce job. The job first creates HDFS partitions by spliting the dataset into chunks of a certain size and then distribute the chunks to all the nodes in the cluster. MapReduce jobs can process HDFS blocks in parallel at distributed machines and save the output to one directory.
 
 A standard MapReduce would follow these six steps:  
 
@@ -42,7 +45,7 @@ A standard MapReduce would follow these six steps:
 
 6. **Reduce-Reduce**: A partiion, a group of data, will be processed by our reduce() function in this task. Ususally, it should summarize the output, leading to a significant reduce in the data size, as this task removes redundancy;
 
-(Step 3, 4 and 5 are often recogized as one "Shuffle" stage in many cases, as they are closed related and are not controlled by user functions)  
+(Step 3, 4 and 5 are often recogized as one "Shuffle" stage in many cases, as they are closed related and are not controlled by user functions)    
 
 ## Understanding MapReduce: Wordcount
 
@@ -142,9 +145,9 @@ The final results of word counts will be put to target HDFS directory at the use
 
 ## Meet mrjob
 
-[mrjob](https://pythonhosted.org/mrjob/index.html) is a python library to write Hadoop MapReduce programs. Although we can also use no library with simple sys.in, mrjob is more integrated and allows us to run and debug locally. Each mrjob has to have at least one mapper, one combiner(shuffle), and one reducer, included in one or multiple "steps". 
+[mrjob](https://pythonhosted.org/mrjob/index.html) is a ad-hoc library for python programs to operate on Hadoop MapReduce. We will use mrjob library to write our program for Hadoop MapReduce. Although we can also use no library with simple sys.in, mrjob is more integrated and allows us to run and debug locally (also allows us to disply the result in Jupyter). Each mrjob has to have at least one mapper, one combiner(shuffle), and one reducer, included in one or multiple "steps". 
 
-Below is a simple example using mrjob to implement the "apple-pan" example we described above.
+Below is a simple example using mrjob to implement the "apple-pan" example we described above.  
 
 ```
 %%file wordcount.py
