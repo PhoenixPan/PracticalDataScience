@@ -48,7 +48,7 @@ A standard MapReduce would follow these six steps:
 
 Wordcount is the simplest implementation of MapReduce task. Let's get our hands dirty now. Given the sentence below:
 
-<img src="https://cloud.githubusercontent.com/assets/14355257/19906093/ca4cf962-a04f-11e6-9d9e-0e4053259dbe.png" width="300px" height="300px" />
+![ppap](https://cloud.githubusercontent.com/assets/14355257/19906093/ca4cf962-a04f-11e6-9d9e-0e4053259dbe.png)
 <center>__"I have a pan, I have an applie, ah, apple-pan."__</center>
 
 We firstly clean up the text line using this clean function. We will implement similar cleaning process inside our mapper function later. 
@@ -281,13 +281,13 @@ runners:
 3. Launch an EMR cluster. Click "Create cluster" on the upper left corner and go to advanced options.  
   
     Uncheck all other software that we will not use.  
-![title](emr1.png)  
+![emr1](https://cloud.githubusercontent.com/assets/14355257/19906075/be2e1fe4-a04f-11e6-8c53-1a4726cc60ff.png)
   
     Pick three m1.large instace with spot price. The size of the instances is large enough for our small file and the spot price is way much cheaper than on-demand price (at least ten times!).    
-![title](emr2.png)  
+![emr2](https://cloud.githubusercontent.com/assets/14355257/19906074/be2e219c-a04f-11e6-97a0-bded40e06f18.png) 
 
     Change the security group to an all-open one, so we will not encounter any weird exception due to permission denial.  
-![title](emr3.png)
+![emr3](https://cloud.githubusercontent.com/assets/14355257/19906076/be31c5fe-a04f-11e6-85bf-2c528e3c7ba7.png)
 
     Keep clicking next and create the cluster. It may take a while for the spot instances to be launched.   
     
@@ -408,8 +408,8 @@ runners:
 
 If you have low demand on local tests or do not want to use mrjob library and set up the EMR environment, I get a good news for you. There is a way to generate output file without even logging in to your node: Streaming. We simply tell the cluster where the mapper, reducer, input file, output file are and the cluster will finish all tasks automatically. Using streaming, we have to upload all the required to S3 stroage and download the output from it as well. Noteice that there is no combiner, so we have to make some changes to our programs, because reducer will now take the output of mapper as input. To create a streaming MapReduce program, we need to launch an EMR cluster with these configurations changed:  
 
-![title](streaming1.png)
-<img src="streaming2.png" width="800px" height="600px"/>  
+![streaming1](https://cloud.githubusercontent.com/assets/14355257/19906085/c25ce03c-a04f-11e6-8396-59634f1e5931.png)
+![streaming2](https://cloud.githubusercontent.com/assets/14355257/19906086/c261bc4c-a04f-11e6-9526-9a233f386bb8.png) 
   
   
 Here are sample mapper and reducer we can use for the same purpose:  
@@ -463,7 +463,7 @@ If you have a PC, you can download [VirtualBox](https://www.virtualbox.org/wiki/
 Now, you know at least three ways to perform MapReduce tasks: with regular EMR, with streaming EMR, and with local machines. Though we only talked about word count here, there are other tasks you can perform using MapReduce and their idea is the same: map and then reduce. One example is to find mutual friends, based on which you can make friend recommendation. This is a common model used by many organizations such as Facebook and Linkedin.  
   
 In a word, there is a lot more to explore about MapReduce, a mature and practical model for big data analysis.  
-<img src="recommendation.jpg"/>  
+![recommendation](https://cloud.githubusercontent.com/assets/14355257/19906092/c91b8036-a04f-11e6-8bd6-5bffe4e8a5f1.jpg)
 <center>__Using MapReduce to Find Common Friend__</center>
 
 ## References   
