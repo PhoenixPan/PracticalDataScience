@@ -1,2 +1,1 @@
-# PracticalMachineLearning
-
+# Practical Data Science
